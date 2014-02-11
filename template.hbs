@@ -6,7 +6,8 @@
 	{{/if}}
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
-		var socket = io.connect('http://localhost:3333');
+		var origin = window.location.protocol+'//'+window.location.hostname+(window.location.port ? ':'+window.location.port: '');
+		var socket = io.connect(origin);
 		socket.on('reload', function (data) {
 			location.reload();
 		});

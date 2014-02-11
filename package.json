@@ -1,18 +1,34 @@
 {
-  "name": "livemarkdown",
-  "version": "0.0.0",
-  "description": "",
+  "name": "watchmd",
+  "version": "0.0.1",
+  "description": "Lightweight utility for writing markdown",
   "main": "index.js",
+  "dependencies": {
+    "express": "~3.4.8",
+    "handlebars": "~2.0.0-alpha.1",
+    "marked": "~0.3.1",
+    "minimist": "~0.0.7",
+    "socket.io": "~0.9.16"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "BSD-2-Clause",
-  "dependencies": {
-    "marked": "~0.3.1",
-    "handlebars": "~2.0.0-alpha.1",
-    "express": "~3.4.8",
-    "minimist": "0.0.7",
-    "socket.io": "~0.9.16"
-  }
+  "bin": {
+    "watchmd": "./bin/watchmd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/esopian/watchmd.git"
+  },
+  "keywords": [
+    "markdown",
+    "watch"
+  ],
+  "author": "Evan Mallory",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esopian/watchmd/issues"
+  },
+  "homepage": "https://github.com/esopian/watchmd"
 }
