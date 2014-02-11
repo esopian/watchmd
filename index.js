@@ -4,17 +4,18 @@ var Handlebars = require('Handlebars');
 var fs         = require('fs');
 
 var template   = Handlebars.compile(fs.readFileSync('./template.hbs', {encoding:'utf8'}));
+console.log(argv);
 
 var file = argv.f || "example.md";
+var enableStyle = (argv.style !== undefined) ? (argv.style=='true') : true;
 
 var marked = require('marked');
 marked.setOptions({
-	renderer: new marked.Renderer(),
+	// renderer: new marked.Renderer(),
 	gfm: true,
 	tables: true,
 	breaks: false,
-	pedantic: false,
-	sanitize: true,
+	// pedantic: false,
 	smartLists: true,
 	smartypants: false
 });
@@ -29,12 +30,19 @@ var renderPage = function(callback) {
 		if(err) return callback(err);
 		marked(str, function(err, content) {
 			if(err) return callback(err);
-			callback(null, template({markdown:content}) );
+			callback(null, template({
+				markdown:content,
+				style : enableStyle
+			}) );
 		});
 	});
 };
 
-app.get('*', function(req, res){
+app.get('/assets/:file', function(req, res) {
+	res.sendfile('./assets/'+req.param('file'));
+});
+
+app.get('/', function(req, res){
 	renderPage(function(err, result) {
 		if(err) res.send(500, err);
 		else    {
@@ -44,19 +52,23 @@ app.get('*', function(req, res){
 	});
 });
 
+
 io.sockets.on('connection', function (socket) {
 	console.log("socket: new socket connected");
 });
 
 //Setup File Watch
-var waitTime = 150;
-var waiting = false;
+var mtime = null;
 fs.watch(file, function (event, filename) {
-	if(event == 'change' && !waiting) {
-		waiting = true;
-		console.log('File Changed - Reloading Browser');
-		io.sockets.emit('reload');
-		setTimeout(function(){ waiting = false; }, waitTime);
+	if(event == 'change') {
+		fs.stat(file, function(err, stats) {
+			if(err) throw err;
+			if(stats.mtime.getTime() != mtime) {
+				mtime = stats.mtime.getTime();
+				console.log('File Changed - Reloading Browser');
+				io.sockets.emit('reload');
+			}
+		});
 	}
 });
 
