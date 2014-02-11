@@ -3,8 +3,8 @@ var watchmd = require('./watchmd');
 
 var options = {
 	port        : argv.port   || 3333,
-	watchFile   : argv.f      || 'example.md',
-	enableStyle : (argv.style !== undefined) ? (argv.style=='true') : true,
+	watchFile   : (argv.watchFile || argv.f) || 'example.md',
+	style : (argv.style !== undefined) ? (argv.style=='true') : true,
 	spawn       : (argv.spawn !== undefined) ? (argv.spawn=='true') : true
 };
 

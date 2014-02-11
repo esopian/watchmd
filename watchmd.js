@@ -12,7 +12,7 @@ var watchmd = function(options) {
 	var template     = Handlebars.compile(fs.readFileSync(templateFile, {encoding:'utf8'}));
 
 	var file = path.relative(cwd, options.watchFile || __dirname+'/example.md');
-	var enableStyle = options.enableStyle;
+	var style = options.style;
 
 	var marked = require('marked');
 	marked.setOptions({
@@ -27,7 +27,10 @@ var watchmd = function(options) {
 
 	var app    = require('express')();
 	var server = require('http').createServer(app);
-	var io     = require('socket.io').listen(server, { 'destroy upgrade': false });
+	var io     = require('socket.io').listen(server, {
+		'log level'       : 0,
+		'destroy upgrade' : false
+	});
 
 	//Assets Route
 	app.get('/assets/:file', function(req, res) {
@@ -42,7 +45,7 @@ var watchmd = function(options) {
 				res.set({'Content-Type': 'text/html'});
 				res.send(200, template({
 					markdown : content,
-					style    : enableStyle
+					style    : style
 				}) );
 			});
 		});
