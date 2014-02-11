@@ -1,7 +1,9 @@
 watchmd
 =======
 
-Lightweight utility for previewing markdown in your browser
+Lightweight utility for previewing markdown in your browser.
+Will watch your file and reload your preview with every change.
+Use your favorite editor and still get a live markdown preview.
 
 Install
 =======
