@@ -1,14 +1,17 @@
 var express    = require('express');
 var Handlebars = require('Handlebars');
 var fs         = require('fs');
+var path       = require('path');
 
 var watchmd = function(options) {
 	options = options || {};
 
-	var templateFile = options.templateFile || 'template.hbs';
+	var cwd = process.cwd();
+
+	var templateFile = path.relative(cwd, options.templateFile || __dirname+'/template.hbs');
 	var template     = Handlebars.compile(fs.readFileSync(templateFile, {encoding:'utf8'}));
 
-	var file = options.watchFile || 'example.md';
+	var file = path.relative(cwd, options.watchFile || __dirname+'/example.md');
 	var enableStyle = options.enableStyle;
 
 	var marked = require('marked');
@@ -28,7 +31,7 @@ var watchmd = function(options) {
 
 	//Assets Route
 	app.get('/assets/:file', function(req, res) {
-		res.sendfile('./assets/'+req.param('file'));
+		res.sendfile(__dirname+'/assets/'+req.param('file'));
 	});
 
 	app.get('/', function(req, res){
@@ -45,7 +48,11 @@ var watchmd = function(options) {
 		});
 	});
 
+	console.log("Binding server to port "+options.port);
+	server.listen(options.port);
+
 	//Setup File Watch
+	console.log("Listening for change");
 	var mtime = null;
 	fs.watch(file, function (event, filename) {
 		if(event == 'change') {
@@ -60,11 +67,9 @@ var watchmd = function(options) {
 		}
 	});
 
-	console.log("Listening for change");
-	server.listen(options.port);
-
 	//Open a new Browser
 	if(options.spawn) {
+		console.log("Launching Browser....");
 		var spawn = require('child_process').spawn;
 		spawn('open', ['http://localhost:3333']);
 	}
